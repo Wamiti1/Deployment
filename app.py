@@ -9,6 +9,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 from reportlab.lib import colors
 import io
+import pymssql
 
 
 #instantiate the flask application
@@ -18,20 +19,15 @@ CORS(app, origins=["http://localhost:5173"])  # Enable CORS for all routes
 api = Api(app)
 #Create get_connection() that returns the connection object
 def get_connection():
-    connection_str = (
-        "DRIVER={ODBC Driver 17 for SQL Server};"
-        "SERVER=alumnioffice.database.windows.net;"
-        "DATABASE=UniversityAlumniOffice;"
-        "UID=group31;"
-        "PWD=train12$;"
-        "Encrypt=yes;"
-        "TrustServerCertificate=no;"
-        "Connection Timeout=60;"
-        
+    connection = pymssql.connect(
+        server='alumnioffice.database.windows.net',
+        user='group31',
+        password='train12$',
+        database='UniversityAlumniOffice',
+        port=1433,  # Ensure you're using the default SQL Server port
+        timeout=30  # Set a timeout for the connection
     )
-    connection = pyodbc.connect(connection_str)
     return connection
-
 # Helper function to serialize time objects
 def serialize_time(obj):
     if isinstance(obj,time):
