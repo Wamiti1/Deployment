@@ -40,8 +40,6 @@ def serialize_time(obj):
             
 class Tables(Resource) : 
     def get(self, tableName)  :
-        connection = None
-        cursor = None
         try : 
             connection = get_connection()
             cursor = connection.cursor()
@@ -98,18 +96,19 @@ class Tables(Resource) :
             response = make_response(jsonify(data))
             response.headers['Content-Type'] = 'application/json'
             response.headers['Cache-Control'] = 'public,max-age=60'
-            return response
-        except Exception as e :
-            return jsonify({"message" : str(e)})
-        finally :
             cursor.close()
             connection.close()
+            return response
+        
+            
+        except Exception as e :
+            return jsonify({"message" : str(e)})
+       
+           
 api.add_resource(Tables, '/table/<string:tableName>')
   
 class Views(Resource) :
     def get(self, viewsName) :
-        connection = None
-        cursor = None 
         try : 
             connection = get_connection()
             cursor = connection.cursor()
@@ -153,6 +152,8 @@ class Views(Resource) :
                 response = make_response(jsonify(data))
                 response.headers['Content-Type'] = 'application/json'
                 response.headers['Cache-Control'] = 'public,max-age=60'
+                cursor.close()
+                connection.close()
                 return response
         except Exception as e :
             return jsonify({"message" : str(e)})
@@ -165,8 +166,6 @@ api.add_resource(Views,'/views/<string:viewsName>')
 #TODO : Modify the Reports Class to dynamically generate reports
 class Reports(Resource):
     def get(self, reportName):
-        connection = None
-        cursor = None
         try:
             connection = get_connection()
             cursor = connection.cursor()
@@ -244,15 +243,14 @@ class Reports(Resource):
             response = make_response(buffer.getvalue())
             response.headers['Content-Type'] = 'application/pdf'
             response.headers['Content-Disposition'] = f'attachment; filename={reportName}.pdf'
-
+            cursor.close()
+            connection.close()
             return response
 
         except Exception as e:
             return jsonify({"message": str(e)})
 
-        finally:
-            cursor.close()
-            connection.close()
+        
 # Add the resource to the API
 api.add_resource(Reports, '/reports/<string:reportName>')
                                 
