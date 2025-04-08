@@ -40,6 +40,8 @@ def serialize_time(obj):
             
 class Tables(Resource) : 
     def get(self, tableName)  :
+        connection = None
+        cursor = None
         try : 
             connection = get_connection()
             cursor = connection.cursor()
@@ -105,7 +107,9 @@ class Tables(Resource) :
 api.add_resource(Tables, '/table/<string:tableName>')
   
 class Views(Resource) :
-    def get(self, viewsName) : 
+    def get(self, viewsName) :
+        connection = None
+        cursor = None 
         try : 
             connection = get_connection()
             cursor = connection.cursor()
@@ -161,6 +165,8 @@ api.add_resource(Views,'/views/<string:viewsName>')
 #TODO : Modify the Reports Class to dynamically generate reports
 class Reports(Resource):
     def get(self, reportName):
+        connection = None
+        cursor = None
         try:
             connection = get_connection()
             cursor = connection.cursor()
